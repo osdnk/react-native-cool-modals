@@ -7,8 +7,7 @@
 #import <React/RCTShadowView.h>
 #import <React/RCTRootContentView.h>
 #import <React/RCTTouchHandler.h>
-#import "RNScreens-umbrella.h"
-#import "RNScreens-Swift.h"
+#import "RNCoolModals-Swift.h"
 
 @interface RNCMcreenStackView () <UINavigationControllerDelegate, UIAdaptivePresentationControllerDelegate, UIGestureRecognizerDelegate>
 

@@ -6,7 +6,7 @@ import {
   StackActions,
   createNavigator,
 } from 'react-navigation';
-import { ScreenStack, Screen } from 'react-native-screens';
+import { ScreenStack, Screen } from 'react-native-cool-modals';
 
 function renderComponentOrThunk(componentOrThunk, props) {
   if (typeof componentOrThunk === 'function') {

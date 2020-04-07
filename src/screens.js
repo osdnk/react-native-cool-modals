@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { version } from 'react-native/Libraries/Core/ReactNativeVersion';
 
-let ENABLE_SCREENS = false;
+let ENABLE_SCREENS = true;
 
 // UIManager[`${moduleName}`] is deprecated in RN 0.58 and `getViewManagerConfig` is added.
 // We can remove this when we drop support for RN < 0.58.

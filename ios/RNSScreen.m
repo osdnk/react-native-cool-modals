@@ -5,7 +5,7 @@
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTTouchHandler.h>
-#import "RNScreens-Swift.h"
+#import "RNCoolModals-Swift.h"
 
 @interface RNCMScreenView () <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
 @end
