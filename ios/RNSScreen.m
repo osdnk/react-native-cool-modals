@@ -1,17 +1,16 @@
 #import <UIKit/UIKit.h>
 
 #import "RNSScreen.h"
-#import "RNSScreenContainer.h"
-#import "RNSScreenStackHeaderConfig.h"
 
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTTouchHandler.h>
+#import "RNScreens-Swift.h"
 
-@interface RNSScreenView () <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
+@interface RNCMScreenView () <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
 @end
 
-@implementation RNSScreenView {
+@implementation RNCMScreenView {
   __weak RCTBridge *_bridge;
   RNSScreen *_controller;
   RCTTouchHandler *_touchHandler;
@@ -57,13 +56,6 @@
   [_bridge.uiManager setSize:self.bounds.size forView:self];
 }
 
-- (void)setActive:(BOOL)active
-{
-  if (active != _active) {
-    _active = active;
-    [_reactSuperview markChildUpdated];
-  }
-}
 
 - (void)setPointerEvents:(RCTPointerEvents)pointerEvents
 {
@@ -84,6 +76,9 @@
 #else
       _controller.modalPresentationStyle = UIModalPresentationFullScreen;
 #endif
+      if (_controller.transDelegate != nil) {
+        _controller.modalPresentationStyle = UIModalPresentationCustom;
+      }
       break;
     case RNSScreenStackPresentationFullScreenModal:
       _controller.modalPresentationStyle = UIModalPresentationFullScreen;
@@ -112,7 +107,7 @@
     // `modalPresentationStyle` must be set before accessing `presentationController`
     // otherwise a default controller will be created and cannot be changed after.
     // Documented here: https://developer.apple.com/documentation/uikit/uiviewcontroller/1621426-presentationcontroller?language=objc
-    _controller.presentationController.delegate = self;
+    //_controller.presentationController.delegate = self;
   } else if (_stackPresentation != RNSScreenStackPresentationPush) {
     RCTLogError(@"Screen presentation updated from modal to push, this may likely result in a screen object leakage. If you need to change presentation style create a new screen object instead");
   }
@@ -153,14 +148,14 @@
   return _reactSuperview;
 }
 
-- (void)addSubview:(UIView *)view
-{
-  if (![view isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-    [super addSubview:view];
-  } else {
-    ((RNSScreenStackHeaderConfig*) view).screenView = self;
-  }
-}
+//- (void)addSubview:(UIView *)view
+//{
+//  if (![view isKindOfClass:[RNCMScreenStackHeaderConfig class]]) {
+//    [super addSubview:view];
+//  } else {
+//    ((RNCMScreenStackHeaderConfig*) view).screenView = self;
+//  }
+//}
 
 - (void)notifyFinishTransitioning
 {
@@ -193,7 +188,7 @@
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
   for (UIView *parent = self.superview; parent != nil; parent = parent.superview) {
-    if ([parent isKindOfClass:[RCTRootView class]] || [parent isKindOfClass:[RNSScreenView class]]) {
+    if ([parent isKindOfClass:[RCTRootView class]] || [parent isKindOfClass:[RNCMScreenView class]]) {
       return YES;
     }
   }
@@ -246,7 +241,9 @@
 
 - (void)invalidate
 {
-  _controller = nil;
+  if (self.stackPresentation != RNSScreenStackPresentationModal) {
+     _controller = nil;
+  }
 }
 
 @end
@@ -254,23 +251,47 @@
 @implementation RNSScreen {
   __weak id _previousFirstResponder;
   CGRect _lastViewFrame;
+  UIViewController *_parentVC;
 }
 
 - (instancetype)initWithView:(UIView *)view
 {
   if (self = [super init]) {
     self.view = view;
+    self.transDelegate = [self obtainDelegate];
+    if (self.transDelegate != nil) {
+      self.transitioningDelegate = self.transDelegate;
+      self.modalPresentationStyle = UIModalPresentationCustom;
+    }
   }
   return self;
+}
+
+- (void)presentModally:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion topOffset:(CGFloat)topOffset showDragIndicator:(BOOL)showDragIndicator slackStack:(BOOL)slackStack cornerRadius:(NSNumber*)cornerRadius {
+  return [_parentVC presentModally:viewControllerToPresent animated:flag completion:completion topOffset:topOffset showDragIndicator:showDragIndicator slackStack:slackStack cornerRadius:cornerRadius];
+
+}
+
+- (void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)(void))completion {
+  return [_parentVC dismissViewControllerAnimated:flag completion:completion];
+}
+
+- (UIViewController *)presentedViewController {
+  return [_parentVC presentedViewController];
+}
+
+- (UIViewController *)presentingViewController {
+  return [_parentVC presentingViewController];
 }
 
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
+  [_parentVC viewDidLayoutSubviews];
 
   if (!CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
     _lastViewFrame = self.view.frame;
-    [((RNSScreenView *)self.viewIfLoaded) updateBounds];
+    [((RNCMScreenView *)self.viewIfLoaded) updateBounds];
   }
 }
 
@@ -304,14 +325,15 @@
   [super viewDidDisappear:animated];
   if (self.parentViewController == nil && self.presentingViewController == nil) {
     // screen dismissed, send event
-    [((RNSScreenView *)self.view) notifyDismissed];
+    [((RNCMScreenView *)self.view) notifyDismissed];
   }
+  _parentVC = nil;
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-  [((RNSScreenView *)self.view) notifyAppear];
+  [((RNCMScreenView *)self.view) notifyAppear];
 }
 
 - (void)notifyFinishTransitioning
@@ -322,12 +344,15 @@
 
 @end
 
-@implementation RNSScreenManager
+@implementation RNCMScreenManager
 
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_VIEW_PROPERTY(active, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showDragIndicator, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(customStack, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(topOffset, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(cornerRadius, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
@@ -335,7 +360,7 @@ RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 
 - (UIView *)view
 {
-  return [[RNSScreenView alloc] initWithBridge:self.bridge];
+  return [[RNCMScreenView alloc] initWithBridge:self.bridge];
 }
 
 @end

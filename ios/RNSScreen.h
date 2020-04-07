@@ -1,7 +1,6 @@
 #import <React/RCTViewManager.h>
 #import <React/RCTView.h>
 #import <React/RCTComponent.h>
-#import "RNSScreenContainer.h"
 
 @class RNSScreenContainerView;
 
@@ -31,23 +30,28 @@ typedef NS_ENUM(NSInteger, RNSScreenStackAnimation) {
 
 @interface RNSScreen : UIViewController
 
+@property (nonatomic, strong) id<UIViewControllerTransitioningDelegate> transDelegate;
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;
 
 @end
 
-@interface RNSScreenManager : RCTViewManager
+@interface RNCMScreenManager : RCTViewManager
 @end
 
-@interface RNSScreenView : RCTView
+@interface RNCMScreenView : RCTView
 
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDismissed;
-@property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
+@property (weak, nonatomic) UIView *reactSuperview;
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, readonly) BOOL dismissed;
 @property (nonatomic) BOOL active;
+@property (nonatomic) BOOL customStack;
 @property (nonatomic) BOOL gestureEnabled;
+@property (nonatomic) BOOL showDragIndicator;
+@property (nonatomic) NSNumber* topOffset;
+@property (nonatomic) NSNumber* cornerRadius;
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 
