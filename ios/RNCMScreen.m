@@ -12,7 +12,7 @@
 
 @implementation RNCMScreenView {
   __weak RCTBridge *_bridge;
-  RNSScreen *_controller;
+  RNCMScreen *_controller;
   RCTTouchHandler *_touchHandler;
 }
 
@@ -22,7 +22,7 @@
 {
   if (self = [super init]) {
     _bridge = bridge;
-    _controller = [[RNSScreen alloc] initWithView:self];
+    _controller = [[RNCMScreen alloc] initWithView:self];
     _stackPresentation = RNSScreenStackPresentationPush;
     _stackAnimation = RNSScreenStackAnimationDefault;
     _gestureEnabled = YES;
@@ -248,7 +248,7 @@
 
 @end
 
-@implementation RNSScreen {
+@implementation RNCMScreen {
   __weak id _previousFirstResponder;
   CGRect _lastViewFrame;
   UIViewController *_parentVC;

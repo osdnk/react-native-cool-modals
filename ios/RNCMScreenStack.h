@@ -1,7 +1,7 @@
 #import <React/RCTViewManager.h>
 #import <React/RCTUIManagerObserverCoordinator.h>
 
-@interface RNCMcreenStackView : UIView <RCTInvalidating>
+@interface RNCMScreenStackView : UIView <RCTInvalidating>
 
 @property (nonatomic, copy) RCTDirectEventBlock onFinishTransitioning;
 

@@ -9,7 +9,7 @@
 #import <React/RCTTouchHandler.h>
 #import "RNCoolModals-Swift.h"
 
-@interface RNCMcreenStackView () <UINavigationControllerDelegate, UIAdaptivePresentationControllerDelegate, UIGestureRecognizerDelegate>
+@interface RNCMScreenStackView () <UINavigationControllerDelegate, UIAdaptivePresentationControllerDelegate, UIGestureRecognizerDelegate>
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
@@ -17,11 +17,11 @@
 
 @end
 
-@interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>
+@interface RNCMScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>
 - (instancetype)initWithOperation:(UINavigationControllerOperation)operation;
 @end
 
-@implementation RNCMcreenStackView {
+@implementation RNCMScreenStackView {
   UINavigationController *_controller;
   NSMutableArray<RNCMScreenView *> *_reactSubviews;
   __weak RNCMScreenStackManager *_manager;
@@ -101,7 +101,7 @@
     screen = (RNCMScreenView *) fromVC.view;
   }
   if (screen != nil && (screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationNone)) {
-    return  [[RNSScreenStackAnimator alloc] initWithOperation:operation];
+    return  [[RNCMScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;
 }
@@ -252,7 +252,7 @@
     }
   }
   
-  __weak RNCMcreenStackView *weakSelf = self;
+  __weak RNCMScreenStackView *weakSelf = self;
   
   void (^afterTransitions)(void) = ^{
     if (weakSelf.onFinishTransitioning) {
@@ -304,7 +304,7 @@
   };
   
   UIViewController* presentedViewController = changeRootController.presentedViewController;
-  if (![presentedViewController isKindOfClass:[RNSScreen class]] && presentedViewController != nil) {
+  if (![presentedViewController isKindOfClass:[RNCMScreen class]] && presentedViewController != nil) {
     RNCMScreenView* view = (RNCMScreenView*) presentedViewController.view;
     presentedViewController = view.controller;
     if ([_presentedModals containsObject:presentedViewController]) {
@@ -341,7 +341,7 @@
   // making any updated when transition is ongoing and schedule updates for when the transition
   // is complete.
   if (_controller.transitionCoordinator != nil) {
-    __weak RNCMcreenStackView *weakSelf = self;
+    __weak RNCMScreenStackView *weakSelf = self;
     [_controller.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
       // do nothing here, we only want to be notified when transition is complete
     } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
@@ -357,7 +357,7 @@
   // instance. This is a workaround for header height adjustment bug (see comment
   // in the init function). Here, we need to detect if the initial empty
   // controller is still there
-  BOOL firstTimePush = ![lastTop isKindOfClass:[RNSScreen class]];
+  BOOL firstTimePush = ![lastTop isKindOfClass:[RNCMScreen class]];
   
   BOOL shouldAnimate = !firstTimePush && ((RNCMScreenView *) lastTop.view).stackAnimation != RNSScreenStackAnimationNone;
   
@@ -450,7 +450,7 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
 
 - (UIView *)view
 {
-  RNCMcreenStackView *view = [[RNCMcreenStackView alloc] initWithManager:self];
+  RNCMScreenStackView *view = [[RNCMScreenStackView alloc] initWithManager:self];
   if (!_stacks) {
     _stacks = [NSPointerArray weakObjectsPointerArray];
   }
@@ -460,7 +460,7 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
 
 - (void)invalidate
 {
-  for (RNCMcreenStackView *stack in _stacks) {
+  for (RNCMScreenStackView *stack in _stacks) {
     [stack dismissOnReload];
   }
   _stacks = nil;
@@ -468,7 +468,7 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
 
 @end
 
-@implementation RNSScreenStackAnimator {
+@implementation RNCMScreenStackAnimator {
   UINavigationControllerOperation _operation;
 }
 
