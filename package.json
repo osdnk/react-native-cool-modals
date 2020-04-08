@@ -1,6 +1,6 @@
 {
   "name": "react-native-cool-modals",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Native navigation primitives for your React Native app.",
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -16,9 +16,6 @@
     "src/",
     "native-stack/",
     "createNativeStackNavigator.js",
-    "android/src/main/AndroidManifest.xml",
-    "android/src/main/java/",
-    "android/build.gradle",
     "ios/",
     "RNCoolModals.podspec",
     "README.md"
