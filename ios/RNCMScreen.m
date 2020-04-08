@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-#import "RNSScreen.h"
+#import "RNCMScreen.h"
 
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>

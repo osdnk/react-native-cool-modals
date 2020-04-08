@@ -1,5 +1,5 @@
-#import "RNSScreenStack.h"
-#import "RNSScreen.h"
+#import "RNCMScreenStack.h"
+#import "RNCMScreen.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTUIManager.h>
