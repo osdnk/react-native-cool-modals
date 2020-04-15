@@ -2,6 +2,7 @@
 import PanModal
 
 class PanModalViewController: UIViewController, PanModalPresentable, UILayoutSupport {
+  weak var config: NSObject?
   var length: CGFloat = 0
   var topAnchor: NSLayoutYAxisAnchor = NSLayoutYAxisAnchor.init()
   var bottomAnchor: NSLayoutYAxisAnchor = NSLayoutYAxisAnchor.init()
@@ -29,6 +30,8 @@ class PanModalViewController: UIViewController, PanModalPresentable, UILayoutSup
       return self
     }
   }
+  
+  
   
   var cornerRadius: CGFloat {
     get {
@@ -65,8 +68,52 @@ class PanModalViewController: UIViewController, PanModalPresentable, UILayoutSup
 
     }
   }
+  
+  var allowsDragToDismiss: Bool {
+    return self.config?.value(forKey: "allowsDragToDismiss") as! Bool
+  }
+  
+  var allowsTapToDismiss: Bool {
+    return self.config?.value(forKey: "allowsTapToDismiss") as! Bool
+  }
+  
+  var anchorModalToLongForm: Bool {
+    return self.config?.value(forKey: "anchorModalToLongForm") as! Bool
+  }
+  
+  var panModalBackgroundColor: UIColor {
+    return UIColor.black.withAlphaComponent(CGFloat(truncating: self.config?.value(forKey: "backgroundOpacity") as! NSNumber))
 
-  var springDamping: CGFloat = 1
+  }
+  
+  func shouldPrioritize(panModalGestureRecognizer: UIPanGestureRecognizer) -> Bool {
+    let headerHeight: CGFloat = CGFloat(truncating: self.config?.value(forKey: "headerHeight") as! NSNumber)
+    let location = panModalGestureRecognizer.location(in: view)
+    return location.y < headerHeight
+  }
+  
+  var isShortFormEnabledInternal = 2
+  var isShortFormEnabled: Bool {
+    let startFromShortForm = self.config?.value(forKey: "startFromShortForm") as! Bool
+    if isShortFormEnabledInternal > 0 && !startFromShortForm {
+      isShortFormEnabledInternal -= 1
+      return false
+    }
+    return self.config?.value(forKey: "isShortFormEnabled") as! Bool
+  }
+  
+  var shortFormHeight: PanModalHeight {
+    let height: CGFloat = CGFloat(truncating: self.config?.value(forKey: "shortFormHeight") as! NSNumber)
+    return isShortFormEnabled ? .contentHeight(height) : longFormHeight
+  }
+  
+  var springDamping: CGFloat {
+    return CGFloat(truncating: self.config?.value(forKey: "springDamping") as! NSNumber)
+  }
+  
+  var transitionDuration: Double {
+    return Double(truncating: self.config?.value(forKey: "transitionDuration") as! NSNumber)
+  }
 
   var showDragIndicator: Bool {
     return showDragIndicatorVal
@@ -74,11 +121,6 @@ class PanModalViewController: UIViewController, PanModalPresentable, UILayoutSup
 
   var topOffset: CGFloat {
     return topOffsetVal
-  }
-
-  func shouldPrioritize(panModalGestureRecognizer: UIPanGestureRecognizer) -> Bool {
-    let location = panModalGestureRecognizer.location(in: view)
-    return location.y < 50
   }
 
   var panScrollable: UIScrollView? {
@@ -118,11 +160,15 @@ extension UIViewController {
                                    topOffset: CGFloat,
                                    showDragIndicator: Bool,
                                    slackStack:Bool,
-                                   cornerRadius:NSNumber? = nil) -> Void {
+                                   cornerRadius:NSNumber? = nil,
+                                   config: NSObject) -> Void
+                                    
+  {
     let controller = PanModalViewController(viewControllerToPresent)
     controller.transitioningDelegate = slackStack ? viewControllerToPresent.transitioningDelegate : nil
     controller.modalPresentationStyle = slackStack ? viewControllerToPresent.modalPresentationStyle : .pageSheet
     controller.topOffsetVal = topOffset
+    controller.config = config
     controller.showDragIndicatorVal = showDragIndicator
     if (cornerRadius != nil) {
       controller.cornerRadiusValue = CGFloat(truncating: cornerRadius!)

@@ -27,6 +27,24 @@
     _stackAnimation = RNSScreenStackAnimationDefault;
     _gestureEnabled = YES;
     _dismissed = NO;
+    
+    _startFromShortForm = false;
+    _topOffset = [[NSNumber alloc] initWithInt: 42];
+    _isShortFormEnabled = false;
+    _longFormHeight = nil;
+    _cornerRadius = [[NSNumber alloc] initWithInt: 8.0];
+    _springDamping = [[NSNumber alloc] initWithDouble: 0.8];
+    _transitionDuration = [[NSNumber alloc] initWithDouble: 0.5];
+    _anchorModalToLongForm = true;
+    _allowsDragToDismiss = true;
+    _allowsTapToDismiss = true;
+    _showDragIndicator = true;
+    _blocksBackgroundTouches = true;
+    _headerHeight = [[NSNumber alloc] initWithInt:0];
+    _shortFormHeight = [[NSNumber alloc] initWithInt:300];;
+    _startFromShortForm = false;
+    _backgroundOpacity = [[NSNumber alloc] initWithDouble:0.7];
+    
   }
 
   return self;
@@ -267,8 +285,9 @@
   return self;
 }
 
-- (void)presentModally:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion topOffset:(CGFloat)topOffset showDragIndicator:(BOOL)showDragIndicator slackStack:(BOOL)slackStack cornerRadius:(NSNumber*)cornerRadius {
-  return [_parentVC presentModally:viewControllerToPresent animated:flag completion:completion topOffset:topOffset showDragIndicator:showDragIndicator slackStack:slackStack cornerRadius:cornerRadius];
+- (void)presentModally:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion topOffset:(CGFloat)topOffset showDragIndicator:(BOOL)showDragIndicator slackStack:(BOOL)slackStack cornerRadius:(NSNumber*)cornerRadius
+    config: (NSObject*) config {
+  return [_parentVC presentModally:viewControllerToPresent animated:flag completion:completion topOffset:topOffset showDragIndicator:showDragIndicator slackStack:slackStack cornerRadius:cornerRadius config:config];
 
 }
 
@@ -357,6 +376,18 @@ RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
+
+RCT_EXPORT_VIEW_PROPERTY(springDamping, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(backgroundOpacity, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(headerHeight, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(shortFormHeight, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(isShortFormEnabled, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(blocksBackgroundTouches, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(anchorModalToLongForm, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(allowsTapToDismiss, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(allowsDragToDismiss, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(startFromShortForm, BOOL)
 
 - (UIView *)view
 {

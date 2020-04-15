@@ -57,7 +57,22 @@ class StackView extends React.Component {
     const SceneComponent = getComponent();
 
     let stackPresentation = 'push';
-    const { customStack, topOffset, showDragIndicator, cornerRadius } = options;
+    const {
+      customStack,
+      topOffset,
+      showDragIndicator,
+      allowsDragToDismiss,
+      allowsTapToDismiss,
+      anchorModaltoLongForm,
+      backgroundOpacity,
+      cornerRadius,
+      headerHeight,
+      isShortFormEnabled,
+      shortFormHeight,
+      springDamping,
+      startFromShortForm,
+      transitionDuration,
+    } = options;
 
     if (mode === 'modal' || mode === 'containedModal') {
       stackPresentation = mode;
@@ -77,6 +92,17 @@ class StackView extends React.Component {
     const { screenProps } = this.props;
     return (
       <Screen
+        allowsDragToDismiss={allowsDragToDismiss}
+        allowsTapToDismiss={allowsTapToDismiss}
+        anchorModaltoLongForm={anchorModaltoLongForm}
+        backgroundOpacity={backgroundOpacity}
+        blocksBackgroundTouches={backgroundOpacity}
+        headerHeight={headerHeight}
+        isShortFormEnabled={isShortFormEnabled}
+        shortFormHeight={shortFormHeight}
+        springDamping={springDamping}
+        startFromShortForm={startFromShortForm}
+        transitionDuration={transitionDuration}
         customStack={customStack}
         topOffset={topOffset}
         cornerRadius={cornerRadius}

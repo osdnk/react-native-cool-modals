@@ -55,6 +55,20 @@ typedef NS_ENUM(NSInteger, RNSScreenStackAnimation) {
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 
+
+@property (nonatomic) BOOL isShortFormEnabled;
+@property (nonatomic, nullable) NSNumber *longFormHeight;
+@property (nonatomic, nonnull) NSNumber *springDamping;
+@property (nonatomic, nonnull) NSNumber *transitionDuration;
+@property (nonatomic, nonnull) NSNumber *backgroundOpacity;
+@property (nonatomic) BOOL anchorModalToLongForm;
+@property (nonatomic) BOOL allowsDragToDismiss;
+@property (nonatomic) BOOL allowsTapToDismiss;
+@property (nonatomic) BOOL blocksBackgroundTouches;
+@property (nonatomic, nonnull) NSNumber *headerHeight;
+@property (nonatomic, nonnull) NSNumber *shortFormHeight;
+@property (nonatomic) BOOL startFromShortForm;
+
 - (void)notifyFinishTransitioning;
 
 @end
