@@ -315,12 +315,36 @@
   }
   if (presentedViewController != nil
       && ([_presentedModals containsObject:presentedViewController] )) {
-    [changeRootController
-     dismissViewControllerAnimated:(changeRootIndex == controllers.count)
+    [RNCMScreenStackView dismissViewControllerWrapper: changeRootController
+     animated:(changeRootIndex == controllers.count)
      completion:finish];
   } else {
     finish();
   }
+}
+
++ (void) dismissViewControllerWrapper:(UIViewController*) vc
+                      animated:(BOOL) animated
+                      completion:(void (^)(void))completion {
+  
+//  [vc dismissViewControllerAnimated:animated completion:completion];
+//  return;
+  UIViewController* x = vc.presentedViewController;
+  
+  RNCMScreenView* view = (RNCMScreenView *) x.view;
+  NSNumber* transitionDuration = view.transitionDuration;
+
+  SEL selector = NSSelectorFromString(@"hide");
+  [x performSelector:selector];
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, transitionDuration.longValue * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+    SEL unhackParent = NSSelectorFromString(@"unhackParent");
+     [x performSelector:unhackParent];
+    [vc dismissViewControllerAnimated:NO completion:completion];
+  });
+
+
+  
+//  [vc dismissViewControllerAnimated:animated completion:completion];
 }
 
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
