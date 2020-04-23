@@ -64,6 +64,7 @@ class StackView extends React.Component {
       allowsDragToDismiss,
       allowsTapToDismiss,
       anchorModaltoLongForm,
+      backgroundColor,
       backgroundOpacity,
       cornerRadius,
       headerHeight,
@@ -95,6 +96,7 @@ class StackView extends React.Component {
         allowsDragToDismiss={allowsDragToDismiss}
         allowsTapToDismiss={allowsTapToDismiss}
         anchorModaltoLongForm={anchorModaltoLongForm}
+        backgroundColor={backgroundColor}
         backgroundOpacity={backgroundOpacity}
         blocksBackgroundTouches={backgroundOpacity}
         headerHeight={headerHeight}

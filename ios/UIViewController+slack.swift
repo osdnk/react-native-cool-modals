@@ -80,10 +80,10 @@ class PanModalViewController: UIViewController, PanModalPresentable, UILayoutSup
   var anchorModalToLongForm: Bool {
     return self.config?.value(forKey: "anchorModalToLongForm") as! Bool
   }
-  
-  var panModalBackgroundColor: UIColor {
-    return UIColor.black.withAlphaComponent(CGFloat(truncating: self.config?.value(forKey: "backgroundOpacity") as! NSNumber))
 
+  var panModalBackgroundColor: UIColor {
+    let backgroundColor: UIColor = self.config?.value(forKey: "backgroundColor") as! UIColor
+    return backgroundColor.withAlphaComponent(CGFloat(truncating: self.config?.value(forKey: "backgroundOpacity") as! NSNumber))
   }
   
   func shouldPrioritize(panModalGestureRecognizer: UIPanGestureRecognizer) -> Bool {

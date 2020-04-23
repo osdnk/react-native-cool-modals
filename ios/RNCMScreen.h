@@ -60,6 +60,7 @@ typedef NS_ENUM(NSInteger, RNSScreenStackAnimation) {
 @property (nonatomic, nullable) NSNumber *longFormHeight;
 @property (nonatomic, nonnull) NSNumber *springDamping;
 @property (nonatomic, nonnull) NSNumber *transitionDuration;
+@property (nonatomic, nonnull) UIColor *backgroundColor;
 @property (nonatomic, nonnull) NSNumber *backgroundOpacity;
 @property (nonatomic) BOOL anchorModalToLongForm;
 @property (nonatomic) BOOL allowsDragToDismiss;

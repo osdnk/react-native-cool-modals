@@ -43,6 +43,7 @@
     _headerHeight = [[NSNumber alloc] initWithInt:0];
     _shortFormHeight = [[NSNumber alloc] initWithInt:300];;
     _startFromShortForm = false;
+    _backgroundColor = [[UIColor alloc] initWithRed:0.0f green:0.0f blue:0.0f alpha:1];
     _backgroundOpacity = [[NSNumber alloc] initWithDouble:0.7];
     
   }
@@ -379,6 +380,7 @@ RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 
 RCT_EXPORT_VIEW_PROPERTY(springDamping, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(backgroundOpacity, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(headerHeight, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(shortFormHeight, NSNumber)
