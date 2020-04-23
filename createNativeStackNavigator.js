@@ -66,6 +66,7 @@ class StackView extends React.Component {
       anchorModaltoLongForm,
       backgroundColor,
       backgroundOpacity,
+      blocksBackgroundTouches,
       cornerRadius,
       headerHeight,
       isShortFormEnabled,
@@ -98,7 +99,7 @@ class StackView extends React.Component {
         anchorModaltoLongForm={anchorModaltoLongForm}
         backgroundColor={backgroundColor}
         backgroundOpacity={backgroundOpacity}
-        blocksBackgroundTouches={backgroundOpacity}
+        blocksBackgroundTouches={blocksBackgroundTouches}
         headerHeight={headerHeight}
         isShortFormEnabled={isShortFormEnabled}
         shortFormHeight={shortFormHeight}
