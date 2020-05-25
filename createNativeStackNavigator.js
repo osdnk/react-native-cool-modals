@@ -18,7 +18,10 @@ function renderComponentOrThunk(componentOrThunk, props) {
 const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
 
 class StackView extends React.Component {
-  _removeScene = route => {
+  _removeScene = (route, descriptor) => {
+    descriptor.options &&
+      descriptor.options.onDismissed &&
+      descriptor.options.onDismissed();
     this.props.navigation.dispatch({
       type: REMOVE_ACTION,
       immediate: true,
@@ -64,6 +67,7 @@ class StackView extends React.Component {
       allowsDragToDismiss,
       allowsTapToDismiss,
       anchorModaltoLongForm,
+      onWillDismiss,
       backgroundColor,
       backgroundOpacity,
       blocksBackgroundTouches,
@@ -94,6 +98,7 @@ class StackView extends React.Component {
     const { screenProps } = this.props;
     return (
       <Screen
+        onWillDismiss={onWillDismiss}
         allowsDragToDismiss={allowsDragToDismiss}
         allowsTapToDismiss={allowsTapToDismiss}
         anchorModaltoLongForm={anchorModaltoLongForm}
@@ -123,7 +128,7 @@ class StackView extends React.Component {
           options.gestureEnabled === undefined ? true : options.gestureEnabled
         }
         onAppear={() => this._onAppear(route, descriptor)}
-        onDismissed={() => this._removeScene(route)}>
+        onDismissed={() => this._removeScene(route, descriptor)}>
         <SceneView
           screenProps={screenProps}
           navigation={navigation}

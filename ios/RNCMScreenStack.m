@@ -35,7 +35,7 @@
     _presentedModals = [NSMutableArray new];
     _controller = [[UINavigationController alloc] init];
     _controller.delegate = self;
-    
+
     // we have to initialize viewControllers with a non empty array for
     // largeTitle header to render in the opened state. If it is empty
     // the header will render in collapsed state which is perhaps a bug
@@ -116,9 +116,9 @@
   while (parent != nil && ![parent isKindOfClass:[RCTRootContentView class]]) parent = parent.superview;
   RCTRootContentView *rootView = (RCTRootContentView *)parent;
   [rootView.touchHandler cancel];
-  
+
   RNCMScreenView *topScreen = (RNCMScreenView *)_controller.viewControllers.lastObject.view;
-  
+
   return _controller.viewControllers.count > 1 && topScreen.gestureEnabled;
 }
 
@@ -212,25 +212,25 @@
     _scheduleModalsUpdate = YES;
     return;
   }
-  
+
   // when there is no change we return immediately. This check is important because sometime we may
   // accidently trigger modal dismiss if we don't verify to run the below code only when an actual
   // change in the list of presented modal was made.
   if ([_presentedModals isEqualToArray:controllers]) {
     return;
   }
-  
+
   // if view controller is not yet attached to window we skip updates now and run them when view
   // is attached
   if (self.window == nil && _presentedModals.lastObject.view.window == nil) {
     return;
   }
-  
+
   _updatingModals = YES;
-  
+
   NSMutableArray<UIViewController *> *newControllers = [NSMutableArray arrayWithArray:controllers];
   [newControllers removeObjectsInArray:_presentedModals];
-  
+
   // find bottom-most controller that should stay on the stack for the duration of transition
   NSUInteger changeRootIndex = 0;
   UIViewController *changeRootController = _controller;
@@ -242,7 +242,7 @@
       break;
     }
   }
-  
+
   // we verify that controllers added on top of changeRootIndex are all new. Unfortunately modal
   // VCs cannot be reshuffled (there are some visual glitches when we try to dismiss then show as
   // even non-animated dismissal has delay and updates the screen several times)
@@ -251,9 +251,9 @@
       RCTAssert(false, @"Modally presented controllers are being reshuffled, this is not allowed");
     }
   }
-  
+
   __weak RNCMScreenStackView *weakSelf = self;
-  
+
   void (^afterTransitions)(void) = ^{
     if (weakSelf.onFinishTransitioning) {
       weakSelf.onFinishTransitioning(nil);
@@ -267,7 +267,7 @@
       [weakSelf updateContainer];
     }
   };
-  
+
   void (^finish)(void) = ^{
     NSUInteger oldCount = weakSelf.presentedModals.count;
     if (changeRootIndex < oldCount) {
@@ -287,9 +287,9 @@
       for (NSUInteger i = changeRootIndex; i < controllers.count; i++) {
         UIViewController *next = controllers[i];
         BOOL lastModal = (i == controllers.count - 1);
-        
-        
-        
+
+
+
         [previous presentModally:next
                         animated:lastModal
                       completion:^{
@@ -303,7 +303,7 @@
       }
     }
   };
-  
+
   UIViewController* presentedViewController = changeRootController.presentedViewController;
   if (![presentedViewController isKindOfClass:[RNCMScreen class]] && presentedViewController != nil) {
     RNCMScreenView* view = (RNCMScreenView*) presentedViewController.view;
@@ -311,15 +311,35 @@
     if ([_presentedModals containsObject:presentedViewController]) {
       view.controller = nil;
     }
-    
+
   }
   if (presentedViewController != nil
       && ([_presentedModals containsObject:presentedViewController] )) {
     [changeRootController
      dismissViewControllerAnimated:(changeRootIndex == controllers.count)
      completion:finish];
+     //[RNCMScreenStackView dismissViewControllerWrapper: changeRootController animated:(changeRootIndex == controllers.count) completion:finish];
   } else {
     finish();
+  }
+}
+
++ (void)dismissViewControllerWrapper:(UIViewController*) vc
+                            animated:(BOOL) animated
+                          completion:(void (^)(void))completion {
+  UIViewController* presentedViewController = vc.presentedViewController;
+  RNCMScreenView* view = (RNCMScreenView *) presentedViewController.view;
+  if (view.customStack && animated) {
+    NSNumber* transitionDuration = view.transitionDuration;
+    SEL selector = NSSelectorFromString(@"hide");
+    [presentedViewController performSelector:selector];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (transitionDuration.longValue + 0.2) * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+      SEL unhackParent = NSSelectorFromString(@"unhackParent");
+      [presentedViewController performSelector:unhackParent];
+      [vc dismissViewControllerAnimated:NO completion:completion];
+    });
+  } else {
+    [vc dismissViewControllerAnimated:animated completion:completion];
   }
 }
 
@@ -329,7 +349,7 @@
   if ([_controller.viewControllers isEqualToArray:controllers]) {
     return;
   }
-  
+
   // if view controller is not yet attached to window we skip updates now and run them when view
   // is attached
   if (self.window == nil) {
@@ -350,18 +370,18 @@
     }];
     return;
   }
-  
+
   UIViewController *top = controllers.lastObject;
   UIViewController *lastTop = _controller.viewControllers.lastObject;
-  
+
   // at the start we set viewControllers to contain a single UIVIewController
   // instance. This is a workaround for header height adjustment bug (see comment
   // in the init function). Here, we need to detect if the initial empty
   // controller is still there
   BOOL firstTimePush = ![lastTop isKindOfClass:[RNCMScreen class]];
-  
+
   BOOL shouldAnimate = !firstTimePush && ((RNCMScreenView *) lastTop.view).stackAnimation != RNSScreenStackAnimationNone;
-  
+
   if (firstTimePush) {
     // nothing pushed yet
     [_controller setViewControllers:controllers animated:NO];
@@ -411,7 +431,7 @@
       }
     }
   }
-  
+
   [self setPushViewControllers:pushControllers];
   [self setModalViewControllers:modalControllers];
 }
@@ -491,7 +511,7 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
     UIViewController* fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     screen = (RNCMScreenView *)fromViewController.view;
   }
-  
+
   if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationNone) {
     return 0;
   }
@@ -502,7 +522,7 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
 {
   UIViewController* toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
   UIViewController* fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-  
+
   if (_operation == UINavigationControllerOperationPush) {
     [[transitionContext containerView] addSubview:toViewController.view];
     toViewController.view.alpha = 0.0;
@@ -513,7 +533,7 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
     }];
   } else if (_operation == UINavigationControllerOperationPop) {
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
-    
+
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
       fromViewController.view.alpha = 0.0;
     } completion:^(BOOL finished) {

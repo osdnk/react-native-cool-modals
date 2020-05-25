@@ -27,7 +27,7 @@
     _stackAnimation = RNSScreenStackAnimationDefault;
     _gestureEnabled = YES;
     _dismissed = NO;
-    
+
     _startFromShortForm = false;
     _topOffset = [[NSNumber alloc] initWithInt: 42];
     _isShortFormEnabled = false;
@@ -45,10 +45,14 @@
     _startFromShortForm = false;
     _backgroundColor = [[UIColor alloc] initWithRed:0.0f green:0.0f blue:0.0f alpha:1];
     _backgroundOpacity = [[NSNumber alloc] initWithDouble:0.7];
-    
+
   }
 
   return self;
+}
+
+- (void)willDismiss {
+  _onWillDismiss(nil);
 }
 
 - (void)reactSetFrame:(CGRect)frame
@@ -353,7 +357,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-  [((RNCMScreenView *)self.view) notifyAppear];
+  //[((RNCMScreenView *)self.view) notifyAppear];
 }
 
 - (void)notifyFinishTransitioning
@@ -378,6 +382,7 @@ RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 
+RCT_EXPORT_VIEW_PROPERTY(onWillDismiss, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(springDamping, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)

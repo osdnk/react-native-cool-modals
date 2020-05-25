@@ -4,7 +4,7 @@ import {
   ScreenStack,
   Screen as ScreenComponent,
   ScreenProps,
-} from 'react-native-screens';
+} from 'react-native-cool-modals';
 import {
   StackNavigationState,
   StackActions,
@@ -25,72 +25,106 @@ type Props = {
 };
 
 export default function NativeStackView({
-  state,
-  navigation,
-  descriptors,
-}: Props) {
+                                          state,
+                                          navigation,
+                                          descriptors,
+                                        }: Props) {
   const { colors } = useTheme();
 
   return (
-    <ScreenStack style={styles.container}>
-      {state.routes.map(route => {
-        const { options, render: renderScene } = descriptors[route.key];
-        const {
-          gestureEnabled,
-          stackPresentation = 'push',
-          stackAnimation,
-          contentStyle,
-        } = options;
+      <ScreenStack style={styles.container}>
+        {state.routes.map(route => {
+          const { options, render: renderScene } = descriptors[route.key];
+          const {
+            gestureEnabled,
+            stackPresentation = 'push',
+            stackAnimation,
+            contentStyle,
+          } = options;
 
-        return (
-          <Screen
-            key={route.key}
-            style={StyleSheet.absoluteFill}
-            gestureEnabled={gestureEnabled}
-            stackPresentation={stackPresentation}
-            stackAnimation={stackAnimation}
-            onAppear={() => {
-              navigation.emit({
-                type: 'appear',
-                target: route.key,
-              });
-            }}
-            onDismissed={() => {
-              navigation.emit({
-                type: 'dismiss',
-                target: route.key,
-              });
+          const {
+            customStack,
+            topOffset,
+            showDragIndicator,
+            allowsDragToDismiss,
+            allowsTapToDismiss,
+            anchorModaltoLongForm,
+            onWillDismiss,
+            backgroundOpacity,
+            cornerRadius,
+            headerHeight,
+            isShortFormEnabled,
+            shortFormHeight,
+            springDamping,
+            startFromShortForm,
+            transitionDuration,
+          } = options;
 
-              navigation.dispatch({
-                ...StackActions.pop(),
-                source: route.key,
-                target: state.key,
-              });
-            }}
-            onFinishTransitioning={() => {
-              navigation.emit({
-                type: 'finishTransitioning',
-                target: route.key,
-              });
-            }}>
-            <HeaderConfig {...options} route={route} />
-            <View
-              style={[
-                styles.container,
-                {
-                  backgroundColor:
-                    stackPresentation !== 'transparentModal'
-                      ? colors.background
-                      : undefined,
-                },
-                contentStyle,
-              ]}>
-              {renderScene()}
-            </View>
-          </Screen>
-        );
-      })}
-    </ScreenStack>
+          return (
+              <Screen
+                  customStack={customStack}
+                  topOffset={topOffset}
+                  showDragIndicator={showDragIndicator}
+                  allowsDragToDismiss={allowsDragToDismiss}
+                  allowsTapToDismiss={allowsTapToDismiss}
+                  anchorModaltoLongForm={anchorModaltoLongForm}
+                  onWillDismiss={onWillDismiss}
+                  backgroundOpacity={backgroundOpacity}
+                  cornerRadius={cornerRadius}
+                  headerHeight={headerHeight}
+                  isShortFormEnabled={isShortFormEnabled}
+                  shortFormHeight={shortFormHeight}
+                  springDamping={springDamping}
+                  startFromShortForm={startFromShortForm}
+                  transitionDuration={transitionDuration}
+                  key={route.key}
+                  style={StyleSheet.absoluteFill}
+                  gestureEnabled={gestureEnabled}
+                  stackPresentation={stackPresentation}
+                  stackAnimation={stackAnimation}
+                  onAppear={() => {
+                    options?.onAppear?.()
+                    navigation.emit({
+                      type: 'appear',
+                      target: route.key,
+                    });
+                  }}
+                  onDismissed={() => {
+                    options?.onDismissed?.()
+                    navigation.emit({
+                      type: 'dismiss',
+                      target: route.key,
+                    });
+
+                    navigation.dispatch({
+                      ...StackActions.pop(),
+                      source: route.key,
+                      target: state.key,
+                    });
+                  }}
+                  onFinishTransitioning={() => {
+                    navigation.emit({
+                      type: 'finishTransitioning',
+                      target: route.key,
+                    });
+                  }}>
+                <View
+                    style={[
+                      styles.container,
+                      {
+                        backgroundColor:
+                            stackPresentation !== 'transparentModal'
+                                ? colors.background
+                                : undefined,
+                      },
+                      contentStyle,
+                    ]}>
+                  {renderScene()}
+                </View>
+              </Screen>
+          );
+        })}
+      </ScreenStack>
   );
 }
 
