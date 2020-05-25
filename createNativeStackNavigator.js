@@ -102,7 +102,7 @@ class StackView extends React.Component {
         allowsDragToDismiss={allowsDragToDismiss}
         allowsTapToDismiss={allowsTapToDismiss}
         anchorModaltoLongForm={anchorModaltoLongForm}
-        backgroundColor={backgroundColor}
+        modalBackgroundColor={backgroundColor}
         backgroundOpacity={backgroundOpacity}
         blocksBackgroundTouches={blocksBackgroundTouches}
         headerHeight={headerHeight}

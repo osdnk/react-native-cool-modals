@@ -69,7 +69,7 @@ export default function NativeStackView({
                   allowsTapToDismiss={allowsTapToDismiss}
                   anchorModaltoLongForm={anchorModaltoLongForm}
                   onWillDismiss={onWillDismiss}
-                  backgroundOpacity={backgroundOpacity}
+                  modalBackgroundOpacity={backgroundOpacity}
                   cornerRadius={cornerRadius}
                   headerHeight={headerHeight}
                   isShortFormEnabled={isShortFormEnabled}
